@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Almanach des Plantes</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parch: #f5edd8;
+    --parch-dark: #e8d9b8;
+    --ink: #2b1f0e;
+    --ink-light: #5c4422;
+    --curative: #3a6b35;
+    --curative-light: #5a9154;
+    --curative-bg: #e8f2e7;
+    --nocif: #8b1a1a;
+    --nocif-light: #c0392b;
+    --nocif-bg: #f5e8e8;
+    --gold: #b8860b;
+    --gold-light: #d4a017;
+    --border: #a08040;
+    --shadow: rgba(43,31,14,0.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: #1a1208;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(90,60,10,0.3) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(30,70,20,0.2) 0%, transparent 50%);
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+  }
+  .header-inner {
+    display: inline-block;
+    background: var(--parch);
+    border: 3px double var(--border);
+    padding: 2rem 3rem;
+    position: relative;
+    box-shadow: 0 8px 32px var(--shadow), inset 0 0 60px rgba(184,134,11,0.08);
+  }
+  .header-inner::before, .header-inner::after {
+    content: '❧';
+    position: absolute;
+    font-size: 1.5rem;
+    color: var(--gold);
+  }
+  .header-inner::before { top: 0.5rem; left: 1rem; }
+  .header-inner::after { bottom: 0.5rem; right: 1rem; transform: scaleX(-1); }
+
+  h1 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.4rem, 4vw, 2.8rem);
+    color: var(--ink);
+    letter-spacing: 0.05em;
+    line-height: 1.3;
+  }
+  .header-sub {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    color: var(--ink-light);
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+  }
+  .ornament {
+    color: var(--gold);
+    font-size: 1.2rem;
+    margin: 0.4rem 0;
+    letter-spacing: 0.5em;
+  }
+
+  /* SEARCH & FILTERS */
+  .controls {
+    max-width: 900px;
+    margin: 0 auto 2.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1 1 280px;
+    max-width: 420px;
+  }
+  .search-wrap::before {
+    content: '⚗';
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 1rem;
+    pointer-events: none;
+  }
+  input[type="search"] {
+    width: 100%;
+    padding: 0.6rem 1rem 0.6rem 2.2rem;
+    background: var(--parch);
+    border: 2px solid var(--border);
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="search"]:focus { border-color: var(--gold); }
+  input[type="search"]::placeholder { color: #9a7a50; font-style: italic; }
+
+  .filter-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+  .filter-btn {
+    padding: 0.4rem 1.1rem;
+    border: 2px solid;
+    background: transparent;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.03em;
+  }
+  .filter-btn.all { border-color: var(--border); color: var(--ink-light); background: var(--parch); }
+  .filter-btn.curative { border-color: var(--curative); color: var(--curative); background: rgba(232,242,231,0.7); }
+  .filter-btn.nocif { border-color: var(--nocif); color: var(--nocif); background: rgba(245,232,232,0.7); }
+  .filter-btn.active, .filter-btn:hover { color: white !important; }
+  .filter-btn.all.active, .filter-btn.all:hover { background: var(--ink-light) !important; border-color: var(--ink-light); }
+  .filter-btn.curative.active, .filter-btn.curative:hover { background: var(--curative) !important; }
+  .filter-btn.nocif.active, .filter-btn.nocif:hover { background: var(--nocif) !important; }
+
+  /* ZONE SECTIONS */
+  .zone-section {
+    max-width: 960px;
+    margin: 0 auto 2.5rem;
+  }
+  .zone-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.1rem;
+    color: var(--parch);
+    text-align: center;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    letter-spacing: 0.08em;
+  }
+  .zone-title::before, .zone-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+  .zone-title.reversed::before, .zone-title.reversed::after {
+    background: linear-gradient(to right, transparent, var(--nocif-light), transparent);
+  }
+
+  .sublocation-label {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    color: var(--gold-light);
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.05em;
+    opacity: 0.85;
+  }
+
+  .plants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  /* PLANT CARD */
+  .plant-card {
+    background: var(--parch);
+    border: 1px solid var(--border);
+    padding: 1.1rem 1.2rem;
+    position: relative;
+    transition: transform 0.18s, box-shadow 0.18s;
+    box-shadow: 2px 3px 10px var(--shadow);
+    animation: fadeIn 0.4s ease both;
+  }
+  .plant-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 4px 8px 20px var(--shadow);
+  }
+  .plant-card::before {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px; right: 4px; bottom: 4px;
+    border: 1px solid rgba(184,134,11,0.3);
+    pointer-events: none;
+  }
+
+  .plant-card.curative { border-left: 4px solid var(--curative); }
+  .plant-card.nocif { border-left: 4px solid var(--nocif); }
+
+  .plant-card-type {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.7rem;
+    font-size: 0.7rem;
+    font-family: 'Cinzel Decorative', serif;
+    letter-spacing: 0.05em;
+    padding: 0.1rem 0.4rem;
+    border-radius: 2px;
+  }
+  .curative .plant-card-type { color: var(--curative); background: var(--curative-bg); }
+  .nocif .plant-card-type { color: var(--nocif); background: var(--nocif-bg); }
+
+  .plant-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
+    padding-right: 4rem;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .curative .plant-name { color: #2a4f26; }
+  .nocif .plant-name { color: #6b1414; }
+
+  .location-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    color: var(--ink-light);
+    margin-bottom: 0.6rem;
+    opacity: 0.8;
+  }
+  .location-tag::before { content: '📍 '; font-style: normal; }
+
+  .effects-list {
+    list-style: none;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .effects-list li {
+    padding-left: 1.1rem;
+    position: relative;
+    color: #3a2e1a;
+  }
+  .effects-list li::before {
+    position: absolute;
+    left: 0;
+    font-size: 0.65rem;
+    top: 0.22rem;
+  }
+  .curative .effects-list li { color: #2d4a28; }
+  .curative .effects-list li::before { content: '✦'; color: var(--curative); }
+  .nocif .effects-list li { color: #5c1a1a; }
+  .nocif .effects-list li::before { content: '☠'; color: var(--nocif); }
+
+  .warning-list {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--border);
+  }
+  .warning-list li { color: #8b4513 !important; font-style: italic; }
+  .warning-list li::before { content: '⚠' !important; color: #c87941 !important; }
+
+  /* NO RESULTS */
+  .no-results {
+    text-align: center;
+    color: var(--parch);
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    padding: 3rem;
+    display: none;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    color: rgba(245,237,216,0.4);
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    margin-top: 3rem;
+    letter-spacing: 0.05em;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hidden { display: none !important; }
+
+  /* STATS BAR */
+  .stats-bar {
+    max-width: 960px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stat-pill {
+    background: var(--parch);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.9rem;
+    font-family: 'IM Fell English', serif;
+    font-size: 0.9rem;
+    color: var(--ink-light);
+  }
+  .stat-pill span { font-weight: 600; }
+  .stat-pill.c span { color: var(--curative); }
+  .stat-pill.n span { color: var(--nocif); }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="ornament">— ✦ —</div>
+    <h1>Almanach des Plantes</h1>
+    <div class="header-sub">Propriétés curatives &amp; plantes nocives</div>
+    <div class="ornament">— ✦ —</div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="search-wrap">
+    <input type="search" id="searchInput" placeholder="Rechercher une plante ou un effet…">
+  </div>
+  <div class="filter-btns">
+    <button class="filter-btn all active" data-filter="all">Toutes</button>
+    <button class="filter-btn curative" data-filter="curative">Curatives</button>
+    <button class="filter-btn nocif" data-filter="nocif">Nocives</button>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-pill c">Curatives : <span id="countCurative">0</span></div>
+  <div class="stat-pill n">Nocives : <span id="countNocif">0</span></div>
+  <div class="stat-pill">Total : <span id="countTotal">0</span></div>
+</div>
+
+<div id="plantContainer"></div>
+<p class="no-results" id="noResults">Aucune plante trouvée pour cette recherche…</p>
+
+<footer>Almanach compilé par les herboristes — usage à des fins de référence uniquement</footer>
+
+<script>
+const plants = [
+  // ══════════════════════════════════
+  // ZONE FORÊT — Village
+  // ══════════════════════════════════
+  {
+    name: "Achillea",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Village",
+    effects: ["Coagulant", "Cicatrisant et antibactérien", "Digestif"],
+    warnings: []
+  },
+  {
+    name: "Ail",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Village",
+    effects: [
+      "Protège des pathologies chroniques",
+      "Freine le développement des cancers",
+      "Prévient les maladies cardiovasculaires",
+      "Anti-microbien",
+      "Anti-infectieux",
+      "Antioxydant"
+    ],
+    warnings: ["Éviter avant et après intervention chirurgicale (effet anticoagulant)"]
+  },
+  {
+    name: "Citronnelle",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Village",
+    effects: [
+      "Anti-moustique (répulsif, insecticide, piqûre)",
+      "Désodorisation",
+      "Assainissement de l'air",
+      "Douleurs articulaires (arthrite, polyarthrite, tendinite, synovite)",
+      "Apaisant",
+      "Tension artérielle"
+    ],
+    warnings: ["Peut causer des allergies"]
+  },
+  {
+    name: "Ginkgo Biloba",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Village",
+    effects: [
+      "Réduit les vertiges",
+      "Réduit les symptômes de l'anxiété",
+      "Réduit les pertes de mémoire",
+      "Anti-Coagulant"
+    ],
+    warnings: []
+  },
+  {
+    name: "Sauge",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Village",
+    effects: [
+      "Traite les troubles digestifs",
+      "Traite la transpiration excessive et les bouffées de chaleur",
+      "Stimule la mémoire",
+      "Anti-inflammatoire"
+    ],
+    warnings: [
+      "L'usage prolongé est toxique pour le système nerveux",
+      "Déconseillé aux femmes enceintes ou allaitantes",
+      "Déconseillé pour les personnes souffrant d'épilepsie"
+    ]
+  },
+
+  // ══════════════════════════════════
+  // ZONE FORÊT — Lac
+  // ══════════════════════════════════
+  {
+    name: "Alisma",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Lac",
+    effects: ["Diurétique", "Antibactérien"],
+    warnings: []
+  },
+  {
+    name: "Allium",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Lac",
+    effects: ["Antiseptique interne/externe", "Analgésique en externe"],
+    warnings: []
+  },
+  {
+    name: "Clématite",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Lac",
+    effects: [
+      "Diminue les rhumatismes",
+      "Diminue les douleurs aux reins",
+      "Analgésique faible",
+      "Soigne les névralgies"
+    ],
+    warnings: []
+  },
+  {
+    name: "Iris Versicolore",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Lac",
+    effects: [
+      "Contre la constipation",
+      "Contre les vomissements",
+      "Soigne les brûlures d'estomac (marche aussi pendant la grossesse et l'allaitement)"
+    ],
+    warnings: []
+  },
+  {
+    name: "Thym",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Lac",
+    effects: [
+      "Traite la bronchite",
+      "Soulage la grippe",
+      "Lutte contre la plaque dentaire et prévient les caries",
+      "Soulage la toux et les infections des voies respiratoires supérieures",
+      "Soulage la coqueluche",
+      "Soulage les troubles digestifs et gastro-intestinaux mineurs",
+      "Traite les inflammations des muqueuses buccales et la mauvaise haleine",
+      "Stimule la digestion",
+      "Soigne les blessures cutanées mineures et certaines affections cutanées"
+    ],
+    warnings: [
+      "Peut causer des allergies",
+      "L'huile de Thym peut être toxique si ingestion",
+      "Huile corrosive sur la peau si non diluée"
+    ]
+  },
+  {
+    name: "Aconit",
+    type: "nocif",
+    zone: "Zone Forêt",
+    location: "Lac",
+    effects: [
+      "Brûlures et picotements, suivis de vomissements, faiblesse et syncope",
+      "Les convulsions causeront l'arrêt du cœur"
+    ],
+    warnings: []
+  },
+
+  // ══════════════════════════════════
+  // ZONE FORÊT — Manoir
+  // ══════════════════════════════════
+  {
+    name: "Aloe Vera",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Manoir",
+    effects: [
+      "Calme/guérit les brûlures externes (application directe de la sève)",
+      "Le jus traité permet de guérir les brûlures internes"
+    ],
+    warnings: []
+  },
+  {
+    name: "Aneth",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Manoir",
+    effects: [
+      "Soulage les symptômes de la dyspepsie (flatulences, coliques, spasmes intestinaux)",
+      "Soulage les menstruations douloureuses",
+      "Combat la mauvaise haleine",
+      "Antioxydant"
+    ],
+    warnings: [
+      "Peut provoquer des allergies",
+      "Neurotoxique et abortif (déconseillé chez l'enfant <1 an, femme enceinte et allaitante)"
+    ]
+  },
+  {
+    name: "Consoude Officinale",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Manoir",
+    effects: [
+      "Favorise la croissance et la guérison des muscles et des os",
+      "Aide à la cicatrisation"
+    ],
+    warnings: []
+  },
+  {
+    name: "Jonquille",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Manoir",
+    effects: ["Anticonvulsif", "Sédatif puissant"],
+    warnings: []
+  },
+  {
+    name: "Tilleul",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Manoir",
+    effects: [
+      "Réduit la fièvre",
+      "Traite le rhume et ses symptômes",
+      "Traite l'hypertension",
+      "Traite les maux de tête",
+      "Traite l'insomnie",
+      "Traite les hémorragies",
+      "Traite l'anxiété",
+      "Diurétique",
+      "Antispasmodique",
+      "Expectorant"
+    ],
+    warnings: [
+      "Peut provoquer des réactions cutanées",
+      "Éviter en cas de maladie cardiovasculaire"
+    ]
+  },
+  {
+    name: "Branche d'Aulne Rugueux",
+    type: "curative",
+    zone: "Zone Forêt",
+    location: "Manoir",
+    effects: ["Guérit les maux de gorge et de bouche", "Remède contre la fièvre"],
+    warnings: []
+  },
+  {
+    name: "Bruyère d'Hiver",
+    type: "nocif",
+    zone: "Zone Forêt",
+    location: "Manoir",
+    effects: [
+      "Troubles digestifs",
+      "Saignement interne",
+      "Arrêt du cœur",
+      "Cerveau non irrigué"
+    ],
+    warnings: []
+  },
+
+  // ══════════════════════════════════
+  // ZONE CAPITAL — Source Chaude
+  // ══════════════════════════════════
+  {
+    name: "Branche de Judée",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Source Chaude",
+    effects: ["Soigne les angines"],
+    warnings: []
+  },
+  {
+    name: "Branche de Noisetier à Long Bec",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Source Chaude",
+    effects: [
+      "Les fruits sont comestibles",
+      "Soigne les douleurs inflammatoires",
+      "Soigne les aphtes",
+      "Soigne l'eczéma"
+    ],
+    warnings: []
+  },
+  {
+    name: "Drosera à Feuilles Rondes",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Source Chaude",
+    effects: [
+      "Antitussif (contre la toux)",
+      "Antiseptique",
+      "Antispasmodique"
+    ],
+    warnings: []
+  },
+  {
+    name: "Oenothera",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Source Chaude",
+    effects: ["Anti-Coagulant", "Sédatif", "Anti-Oxydant"],
+    warnings: []
+  },
+  {
+    name: "Arum Blanc",
+    type: "nocif",
+    zone: "Zone Capital",
+    location: "Source Chaude",
+    effects: ["Irritante"],
+    warnings: []
+  },
+
+  // ══════════════════════════════════
+  // ZONE CAPITAL — Alentours de la Capital
+  // ══════════════════════════════════
+  {
+    name: "Branche de Pin Rouge",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Alentours de la Capital",
+    effects: [
+      "Soigne les inflammations",
+      "Expulsion du mucus de la trachée ou des bronches",
+      "Stimulant"
+    ],
+    warnings: []
+  },
+  {
+    name: "Branche de Sapin Baumier",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Alentours de la Capital",
+    effects: ["Soigne les douleurs rhumatismales et névralgiques"],
+    warnings: []
+  },
+  {
+    name: "Estragon",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Alentours de la Capital",
+    effects: [
+      "Traite anxiété et insomnie",
+      "Antioxydant",
+      "Anti-allergène",
+      "Lutte contre les symptômes du diabète"
+    ],
+    warnings: []
+  },
+  {
+    name: "Origan",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Alentours de la Capital",
+    effects: [
+      "Antioxydants",
+      "Anti-infectieux",
+      "Antiseptique",
+      "Antibactérien",
+      "Soulage les troubles digestifs"
+    ],
+    warnings: ["Éviter si prise d'anticoagulants"]
+  },
+  {
+    name: "Branche d'Épicéa",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Alentours de la Capital",
+    effects: [
+      "Sédatif très faible",
+      "Antiseptiques respiratoires",
+      "Remède contre la dépression nerveuse"
+    ],
+    warnings: []
+  },
+  {
+    name: "Jasmin d'Hiver",
+    type: "nocif",
+    zone: "Zone Capital",
+    location: "Alentours de la Capital",
+    effects: ["Vomissements", "Troubles digestifs", "Fatigue"],
+    warnings: []
+  },
+
+  // ══════════════════════════════════
+  // ZONE CAPITAL — Camps Bûcheron
+  // ══════════════════════════════════
+  {
+    name: "Arnica Montana",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Camps Bûcheron",
+    effects: ["Soigne les bleus et les parties enflées du corps", "Soulage la douleur musculaire"],
+    warnings: []
+  },
+  {
+    name: "Astrance",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Camps Bûcheron",
+    effects: ["Faible calmant"],
+    warnings: []
+  },
+  {
+    name: "Crassula Ovata (Jaune)",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Camps Bûcheron",
+    effects: ["Antivirales", "Anti-inflammatoires", "Antibactériennes"],
+    warnings: []
+  },
+  {
+    name: "Laurier",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Camps Bûcheron",
+    effects: ["Antioxydant", "Antiseptique", "Antibactérien"],
+    warnings: []
+  },
+  {
+    name: "Verveine",
+    type: "curative",
+    zone: "Zone Capital",
+    location: "Camps Bûcheron",
+    effects: [
+      "Traite les rhumatismes",
+      "Traite les blessures",
+      "Contraceptif",
+      "Soulage les crampes",
+      "Soulage les spasmes de l'estomac (règles douloureuses)",
+      "Réduit les troubles digestifs",
+      "Réduit les troubles du sommeil",
+      "Réduit l'anxiété et le stress"
+    ],
+    warnings: [
+      "Possibilité de dermatites au contact",
+      "Peut provoquer une contraction des muscles de l'intestin",
+      "Éviter si prise d'anticoagulants",
+      "Éviter en cas d'insuffisance hépatique",
+      "Éviter si faible pression sanguine ou prise d'anti-hypertenseurs",
+      "Éviter si prise de vasopresseurs",
+      "Éviter si anémie, troubles gastro-intestinaux ou neurologiques"
+    ]
+  },
+
+  // ══════════════════════════════════
+  // ZONE QDP — Camps
+  // ══════════════════════════════════
+  {
+    name: "Branche de Saules",
+    type: "curative",
+    zone: "Zone QDP",
+    location: "Camps",
+    effects: ["Lutte contre les douleurs inflammatoires", "Baisse la fièvre"],
+    warnings: []
+  },
+  {
+    name: "Calament",
+    type: "curative",
+    zone: "Zone QDP",
+    location: "Camps",
+    effects: [
+      "Eupeptique (favorise la digestion, calme les douleurs d'estomac, vertiges et maux de tête)",
+      "Antispasmodique (règles douloureuses, acouphènes)",
+      "Carminatif (atténue l'aérophagie)",
+      "Sédatif (aide contre la nervosité et le stress)",
+      "Tonique (stimulant intellectuel)",
+      "Soigne les affections de la bouche"
+    ],
+    warnings: ["Déconseillé durant la grossesse"]
+  },
+  {
+    name: "Gaillet Jaune",
+    type: "curative",
+    zone: "Zone QDP",
+    location: "Camps",
+    effects: ["Coagulant", "Sédatif puissant", "Favorise l'élimination de toxines"],
+    warnings: []
+  },
+  {
+    name: "Primevère Officinale",
+    type: "curative",
+    zone: "Zone QDP",
+    location: "Camps",
+    effects: [
+      "Traitement contre les maladies pulmonaires",
+      "Contre la fièvre",
+      "Légèrement diurétique et calmante"
+    ],
+    warnings: []
+  },
+  {
+    name: "Branche de Némophante Nécrôme",
+    type: "nocif",
+    zone: "Zone QDP",
+    location: "Camps",
+    effects: ["Poison — les baies acides causent des brûlures d'estomac et à forte dose dissolvent partiellement l'estomac"],
+    warnings: []
+  },
+  {
+    name: "Ricin",
+    type: "nocif",
+    zone: "Zone QDP",
+    location: "Camps",
+    effects: ["Détruit les tissus (humain ou démoniaque) — non mortel pour un démon"],
+    warnings: []
+  },
+
+  // ══════════════════════════════════
+  // ZONE QDP — Gare (mêmes plantes que Camps Bûcheron)
+  // ══════════════════════════════════
+  {
+    name: "Arnica Montana",
+    type: "curative",
+    zone: "Zone QDP",
+    location: "Gare",
+    effects: ["Soigne les bleus et les parties enflées du corps", "Soulage la douleur musculaire"],
+    warnings: []
+  },
+  {
+    name: "Astrance",
+    type: "curative",
+    zone: "Zone QDP",
+    location: "Gare",
+    effects: ["Faible calmant"],
+    warnings: []
+  },
+  {
+    name: "Crassula Ovata (Jaune)",
+    type: "curative",
+    zone: "Zone QDP",
+    location: "Gare",
+    effects: ["Antivirales", "Anti-inflammatoires", "Antibactériennes"],
+    warnings: []
+  },
+  {
+    name: "Laurier",
+    type: "curative",
+    zone: "Zone QDP",
+    location: "Gare",
+    effects: ["Antioxydant", "Antiseptique", "Antibactérien"],
+    warnings: []
+  },
+  {
+    name: "Verveine",
+    type: "curative",
+    zone: "Zone QDP",
+    location: "Gare",
+    effects: [
+      "Traite les rhumatismes",
+      "Traite les blessures",
+      "Contraceptif",
+      "Soulage les crampes",
+      "Soulage les spasmes de l'estomac (règles douloureuses)",
+      "Réduit les troubles digestifs",
+      "Réduit les troubles du sommeil",
+      "Réduit l'anxiété et le stress"
+    ],
+    warnings: [
+      "Possibilité de dermatites au contact",
+      "Peut provoquer une contraction des muscles de l'intestin",
+      "Éviter si prise d'anticoagulants",
+      "Éviter en cas d'insuffisance hépatique",
+      "Éviter si faible pression sanguine ou prise d'anti-hypertenseurs",
+      "Éviter si prise de vasopresseurs",
+      "Éviter si anémie, troubles gastro-intestinaux ou neurologiques"
+    ]
+  },
+
+  // ══════════════════════════════════
+  // ZONE SÉLECTION FINALE
+  // ══════════════════════════════════
+  {
+    name: "Camomille",
+    type: "curative",
+    zone: "Zone Sélection Finale",
+    location: "Sélection Finale",
+    effects: [
+      "Action anti-inflammatoire",
+      "Action antispasmodique",
+      "Soigne les troubles digestifs",
+      "Apaise les irritations",
+      "Apaise l'anxiété",
+      "Apaise les maux de gorge",
+      "Apaise les douleurs",
+      "Diminue la fréquence et l'intensité des crises de migraine"
+    ],
+    warnings: []
+  },
+  {
+    name: "Cassandre Calilule",
+    type: "curative",
+    zone: "Zone Sélection Finale",
+    location: "Sélection Finale",
+    effects: ["Apaise la fièvre et les inflammations"],
+    warnings: ["⚠ POISON — L'ébullition des feuilles libère un poison dangereux"]
+  },
+  {
+    name: "Gingembre",
+    type: "curative",
+    zone: "Zone Sélection Finale",
+    location: "Sélection Finale",
+    effects: [
+      "Vertus anti-inflammatoires",
+      "Soulage les troubles digestifs",
+      "Fort pouvoir antioxydant",
+      "Anti-Coagulant"
+    ],
+    warnings: []
+  },
+  {
+    name: "Renoncule d'Eau",
+    type: "curative",
+    zone: "Zone Sélection Finale",
+    location: "Sélection Finale",
+    effects: [
+      "Antispasmodique",
+      "Antalgique",
+      "Astringente",
+      "Vésicatoire",
+      "Antirhumatismale",
+      "Calmante",
+      "Cicatrisante",
+      "Antinévralgique"
+    ],
+    warnings: ["Toxique"]
+  },
+  {
+    name: "Curcuma",
+    type: "curative",
+    zone: "Zone Sélection Finale",
+    location: "Sélection Finale",
+    effects: [
+      "Puissant anti-douleur",
+      "Traite les ulcères de l'estomac/foie",
+      "Traite les maladies inflammatoires",
+      "Traite les troubles digestifs"
+    ],
+    warnings: []
+  },
+  {
+    name: "Ranche d'Épinette Noire",
+    type: "nocif",
+    zone: "Zone Sélection Finale",
+    location: "Sélection Finale",
+    effects: [
+      "Troubles respiratoires productifs",
+      "Douleurs",
+      "Stimulation de l'organisme",
+      "Réchauffement des extrémités (sous forme d'huile)"
+    ],
+    warnings: []
+  },
+
+  // ══════════════════════════════════
+  // ZONE MAGMA
+  // ══════════════════════════════════
+  {
+    name: "Bambou",
+    type: "curative",
+    zone: "Zone Magma",
+    location: "Zone Magma",
+    effects: [
+      "Riche en protéines, acides aminés, fibres et micronutriments",
+      "Reconstruit le cartilage",
+      "Fortifie les ongles et les cheveux"
+    ],
+    warnings: ["Risques d'intoxication si pousses mal préparées"]
+  },
+  {
+    name: "Basilic",
+    type: "curative",
+    zone: "Zone Magma",
+    location: "Zone Magma",
+    effects: [
+      "Antioxydant",
+      "Riche en Vitamine K / Fer",
+      "Antibactérien",
+      "Favorise la digestion"
+    ],
+    warnings: ["Limiter si prise d'anticoagulants"]
+  },
+  {
+    name: "Crocus",
+    type: "curative",
+    zone: "Zone Magma",
+    location: "Zone Magma",
+    effects: ["Antiseptique", "Antidépresseur"],
+    warnings: []
+  },
+  {
+    name: "Lavande",
+    type: "curative",
+    zone: "Zone Magma",
+    location: "Zone Magma",
+    effects: [
+      "Réduit l'anxiété",
+      "Traite les insomnies",
+      "Atténue la douleur",
+      "Traite l'agitation",
+      "Traite les malaises digestifs d'origine nerveuse",
+      "Traite les ballonnements",
+      "Traite les troubles de la circulation (balnéothérapie)",
+      "Soulage les symptômes de la dépression",
+      "Soulage les douleurs spasmodiques, névralgiques et rhumatismales"
+    ],
+    warnings: [
+      "Déconseillé les trois premiers mois de grossesse",
+      "Peut provoquer constipation et maux de tête",
+      "Peut provoquer irritations cutanées chez les personnes allergiques"
+    ]
+  },
+  {
+    name: "Mélisse",
+    type: "curative",
+    zone: "Zone Magma",
+    location: "Zone Magma",
+    effects: [
+      "Soulage les troubles nerveux et digestifs",
+      "Traite l'herpès labial et génital",
+      "Soulage la névralgie",
+      "Traite les blessures mineures",
+      "Soulage les coliques infantiles",
+      "Soulage les troubles du sommeil"
+    ],
+    warnings: []
+  }
+];
+
+// ══════════════════
+// BUILD UI
+// ══════════════════
+
+const ZONE_ORDER = [
+  "Zone Forêt",
+  "Zone Capital",
+  "Zone QDP",
+  "Zone Sélection Finale",
+  "Zone Magma"
+];
+
+const ZONE_ICONS = {
+  "Zone Forêt": "🌲",
+  "Zone Capital": "🏰",
+  "Zone QDP": "⚔️",
+  "Zone Sélection Finale": "✨",
+  "Zone Magma": "🌋"
+};
+
+let activeFilter = 'all';
+let searchQuery = '';
+
+function renderPlants() {
+  const container = document.getElementById('plantContainer');
+  container.innerHTML = '';
+
+  const filtered = plants.filter(p => {
+    const matchType = activeFilter === 'all' || p.type === activeFilter;
+    const q = searchQuery.toLowerCase();
+    const matchSearch = !q ||
+      p.name.toLowerCase().includes(q) ||
+      p.zone.toLowerCase().includes(q) ||
+      p.location.toLowerCase().includes(q) ||
+      p.effects.some(e => e.toLowerCase().includes(q)) ||
+      p.warnings.some(w => w.toLowerCase().includes(q));
+    return matchType && matchSearch;
+  });
+
+  document.getElementById('noResults').style.display = filtered.length === 0 ? 'block' : 'none';
+
+  // Count
+  document.getElementById('countCurative').textContent = plants.filter(p => p.type === 'curative').length;
+  document.getElementById('countNocif').textContent = plants.filter(p => p.type === 'nocif').length;
+  document.getElementById('countTotal').textContent = plants.length;
+
+  // Group by zone then location
+  const grouped = {};
+  filtered.forEach(p => {
+    if (!grouped[p.zone]) grouped[p.zone] = {};
+    if (!grouped[p.zone][p.location]) grouped[p.zone][p.location] = [];
+    grouped[p.zone][p.location].push(p);
+  });
+
+  ZONE_ORDER.forEach(zone => {
+    if (!grouped[zone]) return;
+
+    const zoneEl = document.createElement('div');
+    zoneEl.className = 'zone-section';
+
+    const hasNocif = Object.values(grouped[zone]).flat().some(p => p.type === 'nocif');
+    const titleEl = document.createElement('div');
+    titleEl.className = `zone-title${hasNocif && activeFilter === 'nocif' ? ' reversed' : ''}`;
+    titleEl.innerHTML = `${ZONE_ICONS[zone] || '🌿'} ${zone}`;
+    zoneEl.appendChild(titleEl);
+
+    Object.entries(grouped[zone]).forEach(([loc, locPlants]) => {
+      if (loc !== zone) {
+        const locLabel = document.createElement('div');
+        locLabel.className = 'sublocation-label';
+        locLabel.textContent = `— ${loc} —`;
+        zoneEl.appendChild(locLabel);
+      }
+
+      const grid = document.createElement('div');
+      grid.className = 'plants-grid';
+
+      locPlants.forEach(p => {
+        const card = document.createElement('div');
+        card.className = `plant-card ${p.type}`;
+
+        const typeLabel = p.type === 'curative' ? '✦ Curative' : '☠ Nocive';
+        card.innerHTML = `
+          <div class="plant-card-type">${typeLabel}</div>
+          <div class="plant-name">${p.name}</div>
+          <div class="location-tag">${p.zone} · ${p.location}</div>
+          <ul class="effects-list">
+            ${p.effects.map(e => `<li>${e}</li>`).join('')}
+            ${p.warnings.length ? `<ul class="effects-list warning-list">${p.warnings.map(w => `<li>${w}</li>`).join('')}</ul>` : ''}
+          </ul>
+        `;
+        grid.appendChild(card);
+      });
+
+      zoneEl.appendChild(grid);
+    });
+
+    container.appendChild(zoneEl);
+  });
+}
+
+// Events
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderPlants();
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  renderPlants();
+});
+
+renderPlants();
+</script>
+</body>
+</html>
